@@ -15,7 +15,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
 
         # load images with light and dark mode image
-        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), ".")
+        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "./assets")
         self.logo_image = tk.PhotoImage(file=os.path.join(image_path, "download.png"))
         self.large_test_image = tk.PhotoImage(file=os.path.join(image_path, "download.png"))
         self.image_icon_image = tk.PhotoImage(file=os.path.join(image_path, "download.png"))
