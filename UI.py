@@ -57,7 +57,17 @@ def show_login_window():
                                              command=lambda: toggle_password_visibility(password_entry, show_password_var))
     show_password_checkbox.pack()
 
-    login_button = ttk.Button(login_window, text="Login", command=lambda: print("Logged in"))
+    def login():
+        username = username_entry.get()
+        if username:  # Add your actual authentication logic here
+            app.username = username
+            app.update_user_info()
+            login_window.destroy()
+            print("Logged in")
+        else:
+            messagebox.showwarning("Login failed", "Please enter a username")
+
+    login_button = ttk.Button(login_window, text="Login", command=login)
     login_button.pack(pady=10)
 
 def show_signup_window():
@@ -85,12 +95,23 @@ def show_signup_window():
                                              command=lambda: toggle_password_visibility(password_entry, show_password_var))
     show_password_checkbox.pack()
 
-    signup_button = ttk.Button(signup_window, text="Sign Up", command=lambda: print("Signed up"))
+    def signup():
+        username = username_entry.get()
+        if username:  # Add your actual sign-up logic here
+            app.username = username
+            app.update_user_info()
+            signup_window.destroy()
+            print("Signed up")
+        else:
+            messagebox.showwarning("Sign-up failed", "Please enter a username")
+
+    signup_button = ttk.Button(signup_window, text="Sign Up", command=signup)
     signup_button.pack(pady=10)
 
 class Quiz:
-    def __init__(self, root):
+    def __init__(self, root, app):
         self.root = root
+        self.app = app
         self.questions = [
             ("Which of the following actions helps reduce energy consumption at home?",
              ["A) Leaving lights on all day", "B) Turning off lights when not in use", "C) Using incandescent bulbs", "D) Keeping electronics plugged in"], 
@@ -206,58 +227,86 @@ class Quiz:
                 self.current_question += 1
                 self.update_question()
             else:
+                self.app.quiz_scores.append(self.score)
+                self.app.update_user_info()
                 messagebox.showinfo("Quiz Completed", f"Congratulations! Your score is {self.score}/{len(self.questions)}")
                 self.quiz_window.destroy()
 
 def show_quiz_window():
-    Quiz(root)
+    Quiz(root, app)
 
-# Create the main window
+class EcoSparkApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("EcoSpark")
+        self.root.geometry("800x600")
+
+        self.username = None
+        self.quiz_scores = []
+
+        # Define color theme for sustainability
+        sustainability_bg = "#90ee90"  # Light green background
+        sustainability_fg = "black"    # Black text
+
+        # Create a frame for the video player
+        video_frame = ttk.Frame(root)
+        video_frame.place(x=0, y=0, relwidth=1, relheight=1)
+        video_frame.grid_propagate(False)
+
+        # Create the video player
+        video_path = r"C:\Users\acer\OneDrive\Desktop\Bnmit\Projects\Hackaventus\UI\vid.mp4"
+        self.video_player = VideoPlayer(video_frame, video_path)
+
+        # Create a frame for the navigation bar
+        navbar_frame = ttk.Frame(root, padding=(10, 10, 10, 10), style="Navbar.TFrame")
+        navbar_frame.pack(side=tk.TOP, fill=tk.X)
+
+        # Create Login button
+        login_button = ttk.Button(navbar_frame, text="Login", width=15, style='Navbar.TButton', command=show_login_window)
+        login_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+        # Create Sign up button
+        sign_up_button = ttk.Button(navbar_frame, text="Sign up", width=15, style='Navbar.TButton', command=show_signup_window)
+        sign_up_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+        # Define a custom style for the navigation bar frame and buttons
+        style = ttk.Style()
+        style.configure('Navbar.TFrame', background=sustainability_bg)
+        style.configure('Navbar.TButton', foreground=sustainability_fg, font=('Arial', 12), borderwidth=0, relief=tk.RAISED, padding=10)
+        style.map('Navbar.TButton', background=[('active', '#77dd77')])  # Change background color on button click
+
+        # Define button labels for lessons, quiz, etc.
+        button_labels = ["LESSONS", "QUIZ", "AR/MINI GAMES", "LEADERBOARD"]
+
+        # Create individual buttons for lessons, quiz, etc.
+        for label in button_labels:
+            if label == "QUIZ":
+                button = ttk.Button(root, text=label, width=20, style='Custom.TButton', command=show_quiz_window)
+            else:
+                button = ttk.Button(root, text=label, width=20, style='Custom.TButton')
+            button.pack(side=tk.TOP, pady=10)
+
+        # Create a frame for displaying user info
+        self.user_info_frame = ttk.Frame(root, padding=(10, 10, 10, 10), style="UserInfo.TFrame")
+        self.user_info_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        self.user_info_label = ttk.Label(self.user_info_frame, text="No user logged in.", style="UserInfo.TLabel")
+        self.user_info_label.pack(pady=10)
+        
+        # Define a custom style for the user info frame and label
+        style.configure('UserInfo.TFrame', background=sustainability_bg)
+        style.configure('UserInfo.TLabel', foreground=sustainability_fg, font=('Arial', 12))
+        
+    def update_user_info(self):
+        if self.username:
+            quiz_scores_str = ", ".join(map(str, self.quiz_scores))
+            self.user_info_label.config(text=f"User: {self.username}\nQuiz Scores: {quiz_scores_str}")
+        else:
+            self.user_info_label.config(text="No user logged in.")
+
+# Create the main application
 root = tk.Tk()
-root.title("EcoSpark")
-root.geometry("800x600")
-
-# Define color theme for sustainability
-sustainability_bg = "#90ee90"  # Light green background
-sustainability_fg = "black"    # Black text
-
-# Create a frame for the video player
-video_frame = ttk.Frame(root)
-video_frame.place(x=0, y=0, relwidth=1, relheight=1)
-video_frame.grid_propagate(False)
-
-# Create the video player
-video_path = r"C:\Users\acer\OneDrive\Desktop\Bnmit\Projects\Hackaventus\UI\vid.mp4"
-video_player = VideoPlayer(video_frame, video_path)
-
-# Create a frame for the navigation bar
-navbar_frame = ttk.Frame(root, padding=(10, 10, 10, 10), style="Navbar.TFrame")
-navbar_frame.pack(side=tk.TOP, fill=tk.X)
-
-# Create Login button
-login_button = ttk.Button(navbar_frame, text="Login", width=15, style='Navbar.TButton', command=show_login_window)
-login_button.pack(side=tk.RIGHT, padx=10, pady=10)
-
-# Create Sign up button
-sign_up_button = ttk.Button(navbar_frame, text="Sign up", width=15, style='Navbar.TButton', command=show_signup_window)
-sign_up_button.pack(side=tk.RIGHT, padx=10, pady=10)
-
-# Define a custom style for the navigation bar frame and buttons
-style = ttk.Style()
-style.configure('Navbar.TFrame', background=sustainability_bg)
-style.configure('Navbar.TButton', foreground=sustainability_fg, font=('Arial', 12), borderwidth=0, relief=tk.RAISED, padding=10)
-style.map('Navbar.TButton', background=[('active', '#77dd77')])  # Change background color on button click
-
-# Define button labels for lessons, quiz, etc.
-button_labels = ["LESSONS", "QUIZ", "AR/MINI GAMES", "LEADERBOARD"]
-
-# Create individual buttons for lessons, quiz, etc.
-for label in button_labels:
-    if label == "QUIZ":
-        button = ttk.Button(root, text=label, width=20, style='Custom.TButton', command=show_quiz_window)
-    else:
-        button = ttk.Button(root, text=label, width=20, style='Custom.TButton')
-    button.pack(side=tk.TOP, pady=10)
+app = EcoSparkApp(root)
 
 # Run the main loop
 root.mainloop()

@@ -1,0 +1,62 @@
+[
+    {
+        "question": "Which of the following actions helps reduce energy consumption at home?",
+        "answers": ["A) Leaving lights on all day", "B) Turning off lights when not in use", "C) Using incandescent bulbs", "D) Keeping electronics plugged in"],
+        "correct_answer": 1,
+        "fact": "Fact: Turning off lights when they're not needed can save a significant amount of energy and reduce electricity bills."
+    },
+    {
+        "question": "What should you do with an empty glass bottle?",
+        "answers": ["A) Throw it in the trash", "B) Recycle it", "C) Burn it", "D) Bury it"],
+        "correct_answer": 1,
+        "fact": "Fact: Recycling glass saves raw materials and reduces energy consumption compared to producing new glass from raw materials."
+    },
+    {
+        "question": "What is the benefit of using a reusable water bottle instead of disposable plastic bottles?",
+        "answers": ["A) It's heavier", "B) It's cheaper in the long run", "C) It's more fashionable", "D) It's easier to lose"],
+        "correct_answer": 1,
+        "fact": "Fact: Using a reusable water bottle reduces plastic waste and can save money over time compared to buying disposable bottles."
+    },
+    {
+        "question": "Which type of energy is considered renewable?",
+        "answers": ["A) Coal", "B) Oil", "C) Wind", "D) Natural Gas"],
+        "correct_answer": 2,
+        "fact": "Fact: Wind energy is renewable because it uses wind to generate electricity without depleting natural resources."
+    },
+    {
+        "question": "How can you conserve water while taking a shower?",
+        "answers": ["A) Taking shorter showers", "B) Using a high-flow showerhead", "C) Leaving the water running when not needed", "D) Taking multiple showers a day"],
+        "correct_answer": 0,
+        "fact": "Fact: Shorter showers save water and energy used to heat the water, reducing your environmental footprint."
+    },
+    {
+        "question": "Recycling helps reduce the need for new raw materials.",
+        "answers": ["True", "False"],
+        "correct_answer": 0,
+        "fact": "Fact: Recycling materials like paper, glass, and metals reduces the need to extract and process raw materials, saving energy and reducing pollution."
+    },
+    {
+        "question": "Using public transportation instead of driving alone can lower your carbon footprint.",
+        "answers": ["True", "False"],
+        "correct_answer": 0,
+        "fact": "Fact: Public transportation is more efficient and produces fewer emissions per person compared to individual car use."
+    },
+    {
+        "question": "Turning off your computer when it's not in use saves energy.",
+        "answers": ["True", "False"],
+        "correct_answer": 0,
+        "fact": "Fact: Turning off or putting your computer to sleep when not in use can significantly reduce its energy consumption."
+    },
+    {
+        "question": "Composting food scraps can reduce the amount of waste sent to landfills.",
+        "answers": ["True", "False"],
+        "correct_answer": 0,
+        "fact": "Fact: Composting converts food scraps into valuable organic matter that can enrich soil, reducing landfill waste and methane emissions."
+    },
+    {
+        "question": "LED bulbs use more energy than traditional incandescent bulbs.",
+        "answers": ["True", "False"],
+        "correct_answer": 1,
+        "fact": "Fact: LED bulbs use up to 80% less energy than incandescent bulbs and last much longer, making them a more sustainable choice."
+    }
+]
