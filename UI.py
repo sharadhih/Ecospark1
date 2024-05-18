@@ -3,7 +3,6 @@ from tkinter import ttk, messagebox
 import imageio
 from PIL import Image, ImageTk
 
-    
 class VideoPlayer:
     def __init__(self, root, video_path):
         self.root = root
@@ -195,6 +194,10 @@ class Quiz:
     def next_question(self):
         if self.var.get() == -1:
             messagebox.showwarning("Warning", "Please select an answer")
+            # Return to quiz window without incrementing current_question
+            self.quiz_window.lift()
+            return
+            
         else:
             question, options, correct_answer, qtype, fact = self.questions[self.current_question]
             if self.var.get() == correct_answer:
