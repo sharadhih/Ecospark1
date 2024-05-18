@@ -4,6 +4,7 @@ from PIL import Image
 import tkinter as tk
 from tkinter import filedialog
 from DetectionAPI import detecte_api
+import webbrowser
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -29,7 +30,7 @@ class App(customtkinter.CTk):
                                                      dark_image=Image.open(os.path.join(image_path, "recycle.png")), size=(20, 20))
 
         # create navigation frame
-        self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
+        self.navigation_frame = customtkinter.CTkScrollableFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(4, weight=1)
 
@@ -57,7 +58,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_menu.grid(row=6, column=0, padx=20, pady=20, sticky="s")
 
         # create home frame
-        self.home_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="#012a34")
+        self.home_frame = customtkinter.CTkScrollableFrame(self, corner_radius=0, fg_color="#012a34")
         self.home_frame.grid_columnconfigure(0, weight=1)
 
         self.home_frame_large_image_label = customtkinter.CTkLabel(self.home_frame, text="", image=self.large_test_image)
@@ -69,21 +70,34 @@ class App(customtkinter.CTk):
         #self.home_frame_button_2.grid(row=2, column=0, padx=20, pady=10)
         #self.home_frame_button_3 = customtkinter.CTkButton(self.home_frame, text="CTkButton", image=self.image_icon_image, compound="top")
         #self.home_frame_button_3.grid(row=3, column=0, padx=20, pady=10)
-        #self.home_frame_button_4 = customtkinter.CTkButton(self.home_frame, text="CTkButton", image=self.image_icon_image, compound="bottom", anchor="w")
-        #self.home_frame_button_4.grid(row=4, column=0, padx=20, pady=10)
-
+        
         self.upload_button = customtkinter.CTkButton(self.home_frame, text="Upload Image", command=self.upload_image_and_detect)
         self.upload_button.grid(row=3, column=0, padx=20, pady=20)
 
         # Placeholder for the uploaded image
         self.image_label = customtkinter.CTkLabel(self.home_frame, text="")
         self.image_label.grid(row=4, column=0, padx=20, pady=20)
+
+        # the know-more button
+        self.know_more = customtkinter.CTkButton(self.home_frame, text="know more",
+                                                  image=self.image_icon_image, compound="right", 
+                                                  anchor="w", command=self.open_url)
+        self.know_more.grid(row=6, column=0, padx=20, pady=20)
         
         # create second frame
         self.second_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.green_furniture = customtkinter.CTkLabel(self.second_frame, text="", image=self.large_test_image)
+        self.green_furniture.grid(row=0, column=0, padx=20, pady=10)
+        self.coming = customtkinter.CTkButton(self.second_frame, text="Coming soon")
+        self.coming.grid(row=3, column=0, padx=20, pady=20)
 
         # create third frame
         self.third_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.rrr_furniture = customtkinter.CTkLabel(self.third_frame, text="", image=self.large_test_image)
+        self.rrr_furniture.grid(row=0, column=0, padx=20, pady=10)
+        self.coming1 = customtkinter.CTkButton(self.third_frame, text="Coming soon")
+        self.coming1.grid(row=3, column=0, padx=20, pady=20)
+
 
         # select default frame
         self.select_frame_by_name("home")
@@ -119,9 +133,9 @@ class App(customtkinter.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
-    def show_dialog(text):
+    def show_dialog(self, text):
     # Create a Toplevel window (which acts as a dialog box)
-        dialog = customtkinter.customtkinterToplevel(app)
+        dialog = customtkinter.customtkinterToplevel(self)
         dialog.geometry("300x200")
         dialog.title("Message")
 
@@ -132,28 +146,38 @@ class App(customtkinter.CTk):
         # Add an 'OK' button to close the dialog
         ok_button = customtkinter.CTkButton(dialog, text="OK", command=dialog.destroy)
         ok_button.pack(pady=10)
+   
+    #to go the required url
+    def open_url(self):
+        url = "https://www.greenmatch.co.uk/blog/2020/03/how-to-save-energy-at-home"
+        webbrowser.open(url)
+
     def upload_image_and_detect(self):
         file_path = filedialog.askopenfilename()
         if file_path:
             # Get file extension
             ext = os.path.splitext(file_path)[1]
             # Save the uploaded file to the assets directory
-            save_path = os.path.join("assets", f"test{ext}")
+            save_path = os.path.join("dummy\\assets", f"test{ext}")
+            print(save_path, "\n")
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
             with open(file_path, "rb") as f_src:
                 with open(save_path, "wb") as f_dst:
                     f_dst.write(f_src.read())
 
             # Detecting the bulbs in the image
-            num_of_bulbs_detected, status, img = detecte_api(save_path)
+            num_of_bulbs_detected, status = detecte_api(save_path)
             #save_path = os.path.join("assets", "obj.jpg")
-            im_path="dummy\\assets\\obj.jpg"
-            # if status == "Light Bulb On":
-            #     show_dialog("The bulb is on! off it!")
-            #     # update
+            if num_of_bulbs_detected:
+                im_path="dummy\\assets\\obj.jpg"
+                # if status == "Light Bulb On":
+                #     self.show_dialog("The bulb is on! off it!")
+                #     # update
 
-            # Display the image
-            self.display_image(im_path)
+                # Display the image
+                self.display_image(im_path)
+            else:
+                self.display_image(save_path)
     
 
     def display_image(self, image_path):
