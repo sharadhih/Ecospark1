@@ -12,7 +12,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("CustomTkinter complex_example.py")
-        self.geometry(f"{1100}x{580}")
+        self.geometry("1100x580")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -111,7 +111,7 @@ class App(customtkinter.CTk):
         self.scrollable_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_frame_switches = []
         for i in range(100):
-            switch = customtkinter.CTkSwitch(master=self.scrollable_frame, text=f"CTkSwitch {i}")
+            switch = customtkinter.CTkSwitch(master=self.scrollable_frame, text="CTkSwitch "+str(i))
             switch.grid(row=i, column=0, padx=10, pady=(0, 20))
             self.scrollable_frame_switches.append(switch)
 
@@ -148,10 +148,10 @@ class App(customtkinter.CTk):
         dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
         print("CTkInputDialog:", dialog.get_input())
 
-    def change_appearance_mode_event(self, new_appearance_mode: str):
+    def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-    def change_scaling_event(self, new_scaling: str):
+    def change_scaling_event(self, new_scaling):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
 
