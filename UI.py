@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import imageio
 from PIL import Image, ImageTk
+import subprocess
 
 class VideoPlayer:
     def __init__(self, root, video_path):
@@ -69,6 +70,36 @@ def show_login_window():
 
     login_button = ttk.Button(login_window, text="Login", command=login)
     login_button.pack(pady=10)
+def signup_user(file_path, username, user_pass):
+    # Read the existing JSON data
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        # If the file does not exist, create a new structure
+        data = {'users': []}
+
+    # Check if the username already exists
+    for user in data['users']:
+        if user['username'] == username:
+            print(f"Username '{username}' already exists. Choose a different username.")
+            return
+
+    # Create a new user entry
+    new_user = {
+        "username": username,
+        "user_pass": user_pass,
+        "quiz_score": 0,
+        "ar_game_score": 0
+    }
+
+    # Add the new user to the list
+    data['users'].append(new_user)
+
+    # Write the updated data back to the JSON file
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+    print(f"User '{username}' successfully signed up.")
 
 def show_signup_window():
     signup_window = tk.Toplevel(root)
@@ -97,143 +128,34 @@ def show_signup_window():
 
     def signup():
         username = username_entry.get()
+        password = password_entry.get()
         if username:  # Add your actual sign-up logic here
             app.username = username
             app.update_user_info()
             signup_window.destroy()
-            print("Signed up")
+            signup_user(user_data,username, password)
+            print(username, password)
         else:
             messagebox.showwarning("Sign-up failed", "Please enter a username")
 
     signup_button = ttk.Button(signup_window, text="Sign Up", command=signup)
     signup_button.pack(pady=10)
 
-class Quiz:
-    def __init__(self, root, app):
-        self.root = root
-        self.app = app
-        self.questions = [
-            ("Which of the following actions helps reduce energy consumption at home?",
-             ["A) Leaving lights on all day", "B) Turning off lights when not in use", "C) Using incandescent bulbs", "D) Keeping electronics plugged in"], 
-             1, "mcq", 
-             "Fact: Turning off lights when they're not needed can save a significant amount of energy and reduce electricity bills."),
-            
-            ("What should you do with an empty glass bottle?",
-             ["A) Throw it in the trash", "B) Recycle it", "C) Burn it", "D) Bury it"], 
-             1, "mcq", 
-             "Fact: Recycling glass saves raw materials and reduces energy consumption compared to producing new glass from raw materials."),
-            
-            ("What is the benefit of using a reusable water bottle instead of disposable plastic bottles?",
-             ["A) It's heavier", "B) It's cheaper in the long run", "C) It's more fashionable", "D) It's easier to lose"], 
-             1, "mcq", 
-             "Fact: Using a reusable water bottle reduces plastic waste and can save money over time compared to buying disposable bottles."),
-            
-            ("Which type of energy is considered renewable?",
-             ["A) Coal", "B) Oil", "C) Wind", "D) Natural Gas"], 
-             2, "mcq", 
-             "Fact: Wind energy is renewable because it uses wind to generate electricity without depleting natural resources."),
-            
-            ("How can you conserve water while taking a shower?",
-             ["A) Taking shorter showers", "B) Using a high-flow showerhead", "C) Leaving the water running when not needed", "D) Taking multiple showers a day"], 
-             0, "mcq", 
-             "Fact: Shorter showers save water and energy used to heat the water, reducing your environmental footprint."),
-            
-            ("Recycling helps reduce the need for new raw materials.",
-             ["True", "False"], 
-             0, "tf", 
-             "Fact: Recycling materials like paper, glass, and metals reduces the need to extract and process raw materials, saving energy and reducing pollution."),
-            
-            ("Using public transportation instead of driving alone can lower your carbon footprint.",
-             ["True", "False"], 
-             0, "tf", 
-             "Fact: Public transportation is more efficient and produces fewer emissions per person compared to individual car use."),
-            
-            ("Turning off your computer when it's not in use saves energy.",
-             ["True", "False"], 
-             0, "tf", 
-             "Fact: Turning off or putting your computer to sleep when not in use can significantly reduce its energy consumption."),
-            
-            ("Composting food scraps can reduce the amount of waste sent to landfills.",
-             ["True", "False"], 
-             0, "tf", 
-             "Fact: Composting converts food scraps into valuable organic matter that can enrich soil, reducing landfill waste and methane emissions."),
-            
-            ("LED bulbs use more energy than traditional incandescent bulbs.",
-             ["True", "False"], 
-             1, "tf", 
-             "Fact: LED bulbs use up to 80% less energy than incandescent bulbs and last much longer, making them a more sustainable choice.")
-        ]
-        self.current_question = 0
-        self.score = 0
+def open_quiz_window():
+    subprocess.Popen(["python", "quiz.py"])
+fact_index = None  # Define fact_index as a global variable
 
-        self.quiz_window = tk.Toplevel(root)
-        self.quiz_window.title("Quiz")
-        self.quiz_window.geometry("600x500")
+# def open_eco_nuggets_window():
+#     subprocess.Popen(["python", "eco_nuggets.py"])
 
-        self.question_label = ttk.Label(self.quiz_window, wraplength=400)
-        self.question_label.pack(pady=20)
+def open_ar_game():
+    subprocess.Popen(["python", "ar_ui.py"])
+def open_eco_nuggets():
+    subprocess.Popen(["python", "sco_nugg.py"])
+#fact_index = None  # Define fact_index as a global variable
 
-        self.var = tk.IntVar()
-
-        self.options_frame = ttk.Frame(self.quiz_window)
-        self.options_frame.pack(pady=10)
-
-        self.options = [ttk.Radiobutton(self.options_frame, variable=self.var, value=i) for i in range(4)]
-        for option in self.options:
-            option.pack(anchor="w")
-
-        self.nav_frame = ttk.Frame(self.quiz_window)
-        self.nav_frame.pack(pady=20)
-
-        self.prev_button = ttk.Button(self.nav_frame, text="Previous", command=self.prev_question)
-        self.prev_button.grid(row=0, column=0, padx=10)
-
-        self.next_button = ttk.Button(self.nav_frame, text="Next", command=self.next_question)
-        self.next_button.grid(row=0, column=1, padx=10)
-
-        self.update_question()
-
-    def update_question(self):
-        question, options, correct_answer, qtype, fact = self.questions[self.current_question]
-        self.question_label.config(text=question + "\n\n" + fact)
-        for i, option in enumerate(options):
-            self.options[i].config(text=option, value=i)
-            self.options[i].pack(anchor="w")
-        self.var.set(-1)
-        if qtype == "tf":
-            for i in range(2, 4):
-                self.options[i].pack_forget()
-        else:
-            for i in range(2, 4):
-                self.options[i].pack(anchor="w")
-
-    def prev_question(self):
-        if self.current_question > 0:
-            self.current_question -= 1
-            self.update_question()
-
-    def next_question(self):
-        if self.var.get() == -1:
-            messagebox.showwarning("Warning", "Please select an answer")
-            # Return to quiz window without incrementing current_question
-            self.quiz_window.lift()
-            return
-            
-        else:
-            question, options, correct_answer, qtype, fact = self.questions[self.current_question]
-            if self.var.get() == correct_answer:
-                self.score += 1
-            if self.current_question < len(self.questions) - 1:
-                self.current_question += 1
-                self.update_question()
-            else:
-                self.app.quiz_scores.append(self.score)
-                self.app.update_user_info()
-                messagebox.showinfo("Quiz Completed", f"Congratulations! Your score is {self.score}/{len(self.questions)}")
-                self.quiz_window.destroy()
-
-def show_quiz_window():
-    Quiz(root, app)
+import tkinter as tk
+from tkinter import ttk, messagebox
 
 class EcoSparkApp:
     def __init__(self, root):
@@ -242,7 +164,6 @@ class EcoSparkApp:
         self.root.geometry("800x600")
 
         self.username = None
-        self.quiz_scores = []
 
         # Define color theme for sustainability
         sustainability_bg = "#90ee90"  # Light green background
@@ -254,7 +175,7 @@ class EcoSparkApp:
         video_frame.grid_propagate(False)
 
         # Create the video player
-        video_path = r"C:\Users\acer\OneDrive\Desktop\Bnmit\Projects\Hackaventus\UI\vid.mp4"
+        video_path = r"C:\Users\Impana J\OneDrive\Desktop\F1EcoSpark\dummy\assets\vid.mp4"
         self.video_player = VideoPlayer(video_frame, video_path)
 
         # Create a frame for the navigation bar
@@ -275,16 +196,22 @@ class EcoSparkApp:
         style.configure('Navbar.TButton', foreground=sustainability_fg, font=('Arial', 12), borderwidth=0, relief=tk.RAISED, padding=10)
         style.map('Navbar.TButton', background=[('active', '#77dd77')])  # Change background color on button click
 
-        # Define button labels for lessons, quiz, etc.
-        button_labels = ["LESSONS", "QUIZ", "AR/MINI GAMES", "LEADERBOARD"]
+        # Define button labels for lessons, AR/MINI GAMES, and LEADERBOARD
+        button_labels = ["ECO-QUIZ", "ECO-SCAN", "ECO NUGGETS"]
 
-        # Create individual buttons for lessons, quiz, etc.
+
+        # Create individual buttons for lessons, quiz, AR/MINI GAMES, and LEADERBOARD
         for label in button_labels:
-            if label == "QUIZ":
-                button = ttk.Button(root, text=label, width=20, style='Custom.TButton', command=show_quiz_window)
+            if label == "ECO-QUIZ":
+                button = ttk.Button(root, text=label, width=20, style='Custom.TButton', command=open_quiz_window)
+            elif label == "ECO-SCAN":
+                button = ttk.Button(root, text=label, width=20, style='Custom.TButton', command=open_ar_game)
+            elif label == "ECO NUGGETS":
+                button = ttk.Button(root, text=label, width=20, style='Custom.TButton', command=open_eco_nuggets)
             else:
                 button = ttk.Button(root, text=label, width=20, style='Custom.TButton')
             button.pack(side=tk.TOP, pady=10)
+
 
         # Create a frame for displaying user info
         self.user_info_frame = ttk.Frame(root, padding=(10, 10, 10, 10), style="UserInfo.TFrame")
@@ -299,8 +226,7 @@ class EcoSparkApp:
         
     def update_user_info(self):
         if self.username:
-            quiz_scores_str = ", ".join(map(str, self.quiz_scores))
-            self.user_info_label.config(text=f"User: {self.username}\nQuiz Scores: {quiz_scores_str}")
+            self.user_info_label.config(text=f"User: {self.username}")
         else:
             self.user_info_label.config(text="No user logged in.")
 

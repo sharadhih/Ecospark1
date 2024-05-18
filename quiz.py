@@ -63,6 +63,17 @@ score_label = ttkb.Label(score_frame, text="Score: 0", font=("Arial", 14), boots
 score_label.pack(side="left")
 
 # Function to load the next question
+
+score_path = "score.json"
+def update_points(path, field, score):
+    with open(path, 'r') as file:
+        data = json.load(file)
+    print(data)
+    data[field] = score
+    print(data)
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=4)
+
 def load_next_question():
     global current_question
     if current_question < len(quiz_data):
@@ -72,10 +83,12 @@ def load_next_question():
         fact_label.config(text="")
     else:
         question_label.config(text="Quiz Completed!")
+        update_points(score_path, "quiz_score", score)
         for button in answer_buttons:
             button.config(state="disabled")
         next_button.config(state="disabled")
         submit_button.config(state="disabled")
+
 
 # Function to handle answer submission
 def submit_answer():
