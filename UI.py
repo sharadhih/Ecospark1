@@ -175,7 +175,7 @@ class EcoSparkApp:
         video_frame.grid_propagate(False)
 
         # Create the video player
-        video_path = r"C:\Users\Impana J\OneDrive\Desktop\F1EcoSpark\dummy\assets\vid.mp4"
+        video_path = ".\\assets\\vid.mp4"
         self.video_player = VideoPlayer(video_frame, video_path)
 
         # Create a frame for the navigation bar
