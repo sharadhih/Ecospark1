@@ -1,0 +1,8 @@
+customtkinter
+roboflow
+supervision
+opencv-python
+ttkbootstrap
+imageio
+imageio[ffmpeg]
+imageio[pyav]
